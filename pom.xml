@@ -12,12 +12,10 @@
 	<url>http://www.emergya.es</url>
 	<inceptionYear>2013</inceptionYear>
 	<licenses>
-		<licenses>
 			<license>
 				<name>GPL 2.0</name>
 				<url>http://www.gnu.org/licenses/gpl-2.0.html</url>
 			</license>
-		</licenses>
 	</licenses>
 	<organization>
 		<name>Emergya</name>
@@ -79,11 +77,11 @@
 			<url>http://nexus.emergya.es/nexus/content/repositories/releases</url>
 		</repository>
 		<!-- use the following if you ARE using a snapshot version. -->
-		<snapshotRepository>
+		<repository>
 			<id>nexus.snapshots</id>
 			<name>Nexus Snapshot</name>
 			<url>http://nexus.emergya.es/nexus/content/repositories/snapshots/</url>
-		</snapshotRepository>
+		</repository>
 	</repositories>
 
 	<properties>
