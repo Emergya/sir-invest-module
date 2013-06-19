@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<definitions xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="urn:WSConsultaLlaves" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="urn:WSConsultaLlaves">
+<types>
+<xsd:schema targetNamespace="urn:WSConsultaLlaves"
+>
+ <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/" schemaLocation="http://schemas.xmlsoap.org/soap/encoding/" />
+ <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/" schemaLocation="http://schemas.xmlsoap.org/wsdl/" />
+ <xsd:complexType name="DatosLlamada">
+  <xsd:all>
+   <xsd:element name="Ano" type="xsd:integer"/>
+   <xsd:element name="Region" type="xsd:integer"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Respuesta">
+  <xsd:all>
+   <xsd:element name="CodigoRespuesta" type="xsd:integer"/>
+   <xsd:element name="TextoRespuesta" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="LlavesPreinversionData">
+  <xsd:all>
+   <xsd:element name="Ano" type="xsd:integer"/>
+   <xsd:element name="C_Institucion" type="xsd:integer"/>
+   <xsd:element name="C_Preinversion" type="xsd:integer"/>
+   <xsd:element name="FechaRegistro" type="xsd:integer"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="LlavesPreinversion">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:LlavesPreinversionData[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="LlavesPreinversionARIData">
+  <xsd:all>
+   <xsd:element name="Ano" type="xsd:integer"/>
+   <xsd:element name="C_Institucion" type="xsd:integer"/>
+   <xsd:element name="C_Preinversion" type="xsd:integer"/>
+   <xsd:element name="FechaRegistro" type="xsd:integer"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="LlavesPreinversionARI">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:LlavesPreinversionARIData[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="LlavesPreinversionPROPIRData">
+  <xsd:all>
+   <xsd:element name="Ano" type="xsd:integer"/>
+   <xsd:element name="C_Institucion" type="xsd:integer"/>
+   <xsd:element name="C_Preinversion" type="xsd:integer"/>
+   <xsd:element name="FechaRegistro" type="xsd:integer"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="LlavesPreinversionPROPIR">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:LlavesPreinversionPROPIRData[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="LlavesInversionData">
+  <xsd:all>
+   <xsd:element name="Ano" type="xsd:integer"/>
+   <xsd:element name="C_Institucion" type="xsd:integer"/>
+   <xsd:element name="C_Preinversion" type="xsd:integer"/>
+   <xsd:element name="C_Ficha" type="xsd:integer"/>
+   <xsd:element name="FechaRegistro" type="xsd:integer"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="LlavesInversion">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:LlavesInversionData[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="ConsultaLlavesResponse">
+  <xsd:all>
+   <xsd:element name="DatosLlamada" type="tns:DatosLlamada"/>
+   <xsd:element name="Respuesta" type="tns:Respuesta"/>
+   <xsd:element name="LlavesPreinversion" type="tns:LlavesPreinversion"/>
+   <xsd:element name="LlavesPreinversionARI" type="tns:LlavesPreinversionARI"/>
+   <xsd:element name="LlavesPreinversionPROPIR" type="tns:LlavesPreinversionPROPIR"/>
+   <xsd:element name="LlavesInversion" type="tns:LlavesInversion"/>
+  </xsd:all>
+ </xsd:complexType>
+</xsd:schema>
+</types>
+<message name="WSConsultaLlavesRequest">
+  <part name="Ano" type="xsd:integer" />
+  <part name="CodigoRegion" type="xsd:integer" /></message>
+<message name="WSConsultaLlavesResponse">
+  <part name="return" type="tns:ConsultaLlavesResponse" /></message>
+<portType name="WSConsultaLlavesPortType">
+  <operation name="WSConsultaLlaves">
+    <documentation>Este metodo devuelve lista de llaves de preinversion, planificacion PROPIR y ejecucion PROPIR</documentation>
+    <input message="tns:WSConsultaLlavesRequest"/>
+    <output message="tns:WSConsultaLlavesResponse"/>
+  </operation>
+</portType>
+<binding name="WSConsultaLlavesBinding" type="tns:WSConsultaLlavesPortType">
+  <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="WSConsultaLlaves">
+    <soap:operation soapAction="urn:WSConsultaLlaves/WSConsultaLlaves" style="rpc"/>
+    <input><soap:body use="encoded" namespace="urn:WSConsultaLlaves" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="urn:WSConsultaLlaves" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+</binding>
+<service name="WSConsultaLlaves">
+  <port name="WSConsultaLlavesPort" binding="tns:WSConsultaLlavesBinding">
+    <soap:address location="http://qaweb.chileindica.cl/ws/consultallaves.php"/>
+  </port>
+</service>
+</definitions>
