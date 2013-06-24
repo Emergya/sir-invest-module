@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.emergya.ohiggins" />
+	<context:component-scan base-package="com.emergya.persistenceGeo" />
+
+	<context:property-placeholder
+		properties-ref="modelProperties" />
+
+
+
+	<bean id="modelProperties"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations">
+			<list>
+				<value>classpath:jdbc.properties</value>
+				<value>classpath:hibernate.properties</value>
+			</list>
+		</property>
+	</bean>
+
+
+	<!-- ============================== -->
+	<!-- ========== DAO layer ======== -->
+	<!-- ============================== -->
+
+	<!-- Ohiggins instancer -->
+	<bean id="instancer" class="com.emergya.ohiggins.model.InstancerImpl" />
+
+	<!-- Hibernate -->
+	<tx:annotation-driven />
+	<bean id="dataSourceHibernate" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName">
+			<value>${database.jdbc.driverClass}</value>
+		</property>
+		<property name="url">
+			<value>${database.jdbc.url}</value>
+		</property>
+		<property name="username">
+			<value>${database.jdbc.user}</value>
+		</property>
+		<property name="password">
+			<value>${database.jdbc.password}</value>
+		</property>
+		<property name="removeAbandonedTimeout" value="1" />
+		<property name="removeAbandoned" value="true" />
+	</bean>
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+
+	<bean id="flyway" class="com.googlecode.flyway.core.Flyway"
+		init-method="migrate">
+		<property name="dataSource" ref="dataSourceHibernate" />
+		<property name="schemas">
+			<array>
+				<value>${database.hibernate.default_schema}</value>
+			</array>
+		</property>
+	</bean>
+
+
+	<!-- Must be run after Flyway to ensure the database is compatible with 
+		the code -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean"
+		depends-on="flyway">
+		<property name="dataSource" ref="dataSourceHibernate" />
+		<property name="packagesToScan">
+			<list>
+				<value>com.emergya.ohiggins</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${database.hibernate.dialect}</prop>
+				<prop key="hibernate.default_schema">${database.hibernate.default_schema}
+				</prop>
+				<prop key="hibernate.show_sql">${database.hibernate.show_sql}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${database.hibernate.hbm2ddl.auto}</prop>
+				<prop key="hibernate.connection.characterEncoding">${database.hibernate.connection.characterEncoding}
+				</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<prop key="hibernate.max_fetch_depth">4</prop>
+				<prop key="hibernate.cache.use_second_level_cache">true</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<prop key="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.EhCacheRegionFactory
+				</prop>
+			</props>
+		</property>
+	</bean>
+
+</beans>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<definitions xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="urn:WSConsultaInversionPorLlaveGeoref" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="urn:WSConsultaInversionPorLlaveGeoref">
+<types>
+<xsd:schema targetNamespace="urn:WSConsultaInversionPorLlaveGeoref"
+>
+ <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+ <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/" />
+ <xsd:complexType name="Respuesta">
+  <xsd:all>
+   <xsd:element name="CodigoRespuesta" type="xsd:integer"/>
+   <xsd:element name="TextoRespuesta" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="InversionData">
+  <xsd:all>
+   <xsd:element name="Region" type="xsd:integer"/>
+   <xsd:element name="Ano" type="xsd:integer"/>
+   <xsd:element name="C_Institucion" type="xsd:integer"/>
+   <xsd:element name="C_Preinversion" type="xsd:integer"/>
+   <xsd:element name="C_Ficha" type="xsd:integer"/>
+   <xsd:element name="Codigo" type="xsd:integer"/>
+   <xsd:element name="C_Tipo_Codigo" type="xsd:integer"/>
+   <xsd:element name="N_Tipo_Codigo" type="xsd:string"/>
+   <xsd:element name="C_Etapa_Idi" type="xsd:integer"/>
+   <xsd:element name="N_Etapa_Idi" type="xsd:string"/>
+   <xsd:element name="Nombre_Institucion_Responsable" type="xsd:string"/>
+   <xsd:element name="Nombre_Unidad_Tecnica" type="xsd:string"/>
+   <xsd:element name="N_Region" type="xsd:string"/>
+   <xsd:element name="Nombre_Proyecto" type="xsd:string"/>
+   <xsd:element name="Item_Presupuestario" type="xsd:string"/>
+   <xsd:element name="Nombre_Item_Presupuestario" type="xsd:string"/>
+   <xsd:element name="Nombre_Provincia" type="xsd:string"/>
+   <xsd:element name="Nombre_Comuna" type="xsd:string"/>
+   <xsd:element name="Nombre_Localidad" type="xsd:string"/>
+   <xsd:element name="Costo_Total_Ajustado_Inversion" type="xsd:integer"/>
+   <xsd:element name="Gastado_Anos_Anteriores_Inversion" type="xsd:integer"/>
+   <xsd:element name="Solicitado_Ano_Inversion" type="xsd:integer"/>
+   <xsd:element name="Saldo_Proximo_Ano_Inversion" type="xsd:integer"/>
+   <xsd:element name="Saldo_Anos_Restantes_Inversion" type="xsd:integer"/>
+   <xsd:element name="Total_Asignado_Inversion" type="xsd:integer"/>
+   <xsd:element name="Asignacion_Disponible_Inversion" type="xsd:integer"/>
+   <xsd:element name="Saldo_Por_Asignar_Inversion" type="xsd:integer"/>
+   <xsd:element name="Total_Pagado_Inversion" type="xsd:integer"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="InversionFinanciamientoData">
+  <xsd:all>
+   <xsd:element name="CodigoFuenteFinanciamiento" type="xsd:string"/>
+   <xsd:element name="NombreFuenteFinanciamiento" type="xsd:string"/>
+   <xsd:element name="AsignacionPresupuestaria" type="xsd:string"/>
+   <xsd:element name="NombreAsignacionPresupuestaria" type="xsd:string"/>
+   <xsd:element name="CostoTotalEBI" type="xsd:integer"/>
+   <xsd:element name="CostoTotalEBIActualizado" type="xsd:integer"/>
+   <xsd:element name="CostoTotalEBIActualizadoMasDiezPorciento" type="xsd:integer"/>
+   <xsd:element name="CostoTotalCORE" type="xsd:integer"/>
+   <xsd:element name="CostoTotalAjustado" type="xsd:integer"/>
+   <xsd:element name="GastadoAnosAnteriores" type="xsd:integer"/>
+   <xsd:element name="SolicitadoAno" type="xsd:integer"/>
+   <xsd:element name="SaldoProximoAno" type="xsd:integer"/>
+   <xsd:element name="SaldoAnosRestantes" type="xsd:integer"/>
+   <xsd:element name="TotalAsignado" type="xsd:integer"/>
+   <xsd:element name="AsignacionDisponible" type="xsd:integer"/>
+   <xsd:element name="SaldoPorAsignar" type="xsd:integer"/>
+   <xsd:element name="TotalContratado" type="xsd:integer"/>
+   <xsd:element name="TotalPagado" type="xsd:integer"/>
+   <xsd:element name="Arrastre" type="xsd:integer"/>
+   <xsd:element name="TotalProgramado" type="xsd:integer"/>
+   <xsd:element name="EneroProgramado" type="xsd:integer"/>
+   <xsd:element name="FebreroProgramado" type="xsd:integer"/>
+   <xsd:element name="MarzoProgramado" type="xsd:integer"/>
+   <xsd:element name="AbrilProgramado" type="xsd:integer"/>
+   <xsd:element name="MayoProgramado" type="xsd:integer"/>
+   <xsd:element name="JunioProgramado" type="xsd:integer"/>
+   <xsd:element name="JulioProgramado" type="xsd:integer"/>
+   <xsd:element name="AgostoProgramado" type="xsd:integer"/>
+   <xsd:element name="SeptiembreProgramado" type="xsd:integer"/>
+   <xsd:element name="OctubreProgramado" type="xsd:integer"/>
+   <xsd:element name="NoviembreProgramado" type="xsd:integer"/>
+   <xsd:element name="DiciembreProgramado" type="xsd:integer"/>
+   <xsd:element name="EneroPagado" type="xsd:integer"/>
+   <xsd:element name="FebreroPagado" type="xsd:integer"/>
+   <xsd:element name="MarzoPagado" type="xsd:integer"/>
+   <xsd:element name="AbrilPagado" type="xsd:integer"/>
+   <xsd:element name="MayoPagado" type="xsd:integer"/>
+   <xsd:element name="JunioPagado" type="xsd:integer"/>
+   <xsd:element name="JulioPagado" type="xsd:integer"/>
+   <xsd:element name="AgostoPagado" type="xsd:integer"/>
+   <xsd:element name="SeptiembrePagado" type="xsd:integer"/>
+   <xsd:element name="OctubrePagado" type="xsd:integer"/>
+   <xsd:element name="NoviembrePagado" type="xsd:integer"/>
+   <xsd:element name="DiciembrePagado" type="xsd:integer"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="InversionGeorefData">
+  <xsd:all>
+   <xsd:element name="ElementoGrafico" type="xsd:integer"/>
+   <xsd:element name="CodigoOGC" type="xsd:integer"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="InversionGeorefCoordenadasData">
+  <xsd:all>
+   <xsd:element name="Orden" type="xsd:integer"/>
+   <xsd:element name="EjeX" type="xsd:string"/>
+   <xsd:element name="EjeY" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="RelacionInstrumentosData">
+  <xsd:all>
+   <xsd:element name="Codigo_Instrumento" type="xsd:integer"/>
+   <xsd:element name="Nombre_Instrumento" type="xsd:string"/>
+   <xsd:element name="Instrumento_Relacionado" type="xsd:string"/>
+   <xsd:element name="Especificacion" type="xsd:string"/>
+   <xsd:element name="Relacion_Principal_Codigo" type="xsd:string"/>
+   <xsd:element name="Relacion_Principal_Nombre" type="xsd:string"/>
+   <xsd:element name="Relacion_Asociada_Codigo" type="xsd:string"/>
+   <xsd:element name="Relacion_Asociada_Nombre" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="InversionFinanciamiento">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:InversionFinanciamientoData[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="InversionGeorefCoordenadas">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:InversionGeorefCoordenadasData[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="RelacionInstrumentos">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:RelacionInstrumentosData[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="ConsultaInversionPorLlaveGeorefResponse">
+  <xsd:all>
+   <xsd:element name="Respuesta" type="tns:Respuesta"/>
+   <xsd:element name="InversionData" type="tns:InversionData"/>
+   <xsd:element name="InversionFinanciamiento" type="tns:InversionFinanciamiento"/>
+   <xsd:element name="InversionGeorefData" type="tns:InversionGeorefData"/>
+   <xsd:element name="InversionGeorefCoordenadas" type="tns:InversionGeorefCoordenadas"/>
+   <xsd:element name="RelacionInstrumentos" type="tns:RelacionInstrumentos"/>
+  </xsd:all>
+ </xsd:complexType>
+</xsd:schema>
+</types>
+<message name="WSConsultaInversionPorLlaveGeorefRequest">
+  <part name="Region" type="xsd:integer" />
+  <part name="Ano" type="xsd:integer" />
+  <part name="C_Institucion" type="xsd:integer" />
+  <part name="C_Preinversion" type="xsd:integer" />
+  <part name="C_Ficha" type="xsd:integer" /></message>
+<message name="WSConsultaInversionPorLlaveGeorefResponse">
+  <part name="return" type="tns:ConsultaInversionPorLlaveGeorefResponse" /></message>
+<portType name="WSConsultaInversionPorLlaveGeorefPortType">
+  <operation name="WSConsultaInversionPorLlaveGeoref">
+    <documentation>Este metodo devuelve los datos de una iniciativa de Ejecucion PROPIR, incluida informacion de georeferenciacion</documentation>
+    <input message="tns:WSConsultaInversionPorLlaveGeorefRequest"/>
+    <output message="tns:WSConsultaInversionPorLlaveGeorefResponse"/>
+  </operation>
+</portType>
+<binding name="WSConsultaInversionPorLlaveGeorefBinding" type="tns:WSConsultaInversionPorLlaveGeorefPortType">
+  <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="WSConsultaInversionPorLlaveGeoref">
+    <soap:operation soapAction="urn:WSConsultaInversionPorLlaveGeoref/WSConsultaInversionPorLlaveGeoref" style="rpc"/>
+    <input><soap:body use="encoded" namespace="urn:WSConsultaInversionPorLlaveGeoref" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="urn:WSConsultaInversionPorLlaveGeoref" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+</binding>
+<service name="WSConsultaInversionPorLlaveGeoref">
+  <port name="WSConsultaInversionPorLlaveGeorefPort" binding="tns:WSConsultaInversionPorLlaveGeorefBinding">
+    <soap:address location="http://qaweb.chileindica.cl/ws/ConsultaInversionPorLlaveGeoref.php"/>
+  </port>
+</service>
+</definitions>

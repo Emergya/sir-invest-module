@@ -1,2 +1,7 @@
 target/
 *.class
+/bin
+.project
+.classpath
+.settings
+.springBeans

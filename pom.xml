@@ -1,0 +1,271 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.emergya.siradmin.invest</groupId>
+	<artifactId>investment-ws-updater</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>Invest WS Updater</name>
+	<description>Update investment projects from a web service</description>
+	<url>http://www.emergya.es</url>
+	<inceptionYear>2013</inceptionYear>
+	<licenses>
+		<license>
+			<name>GPL 2.0</name>
+			<url>http://www.gnu.org/licenses/gpl-2.0.html</url>
+		</license>
+	</licenses>
+	<organization>
+		<name>Emergya</name>
+		<url>http://www.emergya.es</url>
+	</organization>
+	<developers>
+		<developer>
+			<id>jlrodriguez</id>
+			<name>Juan Luis Rodriguez Ponce</name>
+			<email>jlrodriguez@emergya.com</email>
+			<timezone>Europe/Madrid</timezone>
+		</developer>
+	</developers>
+
+	<!-- Environment Settings -->
+	<issueManagement>
+		<system>Redmine</system>
+		<url>http://redmine.emergya.es</url>
+	</issueManagement>
+	<ciManagement>
+		<system>jenkins</system>
+		<url>http://jenkins.emergya.es/jenkins/view/OHiggins/</url>
+	</ciManagement>
+
+	<scm>
+		<connection>scm:git:https://github.com/Emergya/sir-invest-module.git</connection>
+		<developerConnection>scm:git:https://github.com/Emergya/sir-invest-module.git</developerConnection>
+		<url>https://github.com/Emergya/sir-invest-module</url>
+	</scm>
+
+	<distributionManagement>
+		<!-- use the following if you're not using a snapshot version. -->
+		<repository>
+			<id>nexus.releases</id>
+			<name>Nexus Releases</name>
+			<url>http://nexus.emergya.es/nexus/content/repositories/releases</url>
+		</repository>
+		<!-- use the following if you ARE using a snapshot version. -->
+		<snapshotRepository>
+			<id>nexus.snapshots</id>
+			<name>Nexus Snapshot</name>
+			<url>http://nexus.emergya.es/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<repositories>
+		<repository>
+			<id>nexus.public</id>
+			<name>Nexus Emergya Public</name>
+			<url>http://nexus.emergya.es/nexus/content/groups/public</url>
+		</repository>
+		<repository>
+			<id>nexus.public.snapshots</id>
+			<name>Nexus Emergya Public Snapshots</name>
+			<url>http://nexus.emergya.es/nexus/content/groups/public-snapshots</url>
+		</repository>
+		<repository>
+			<id>nexus.releases</id>
+			<name>Nexus Releases</name>
+			<url>http://nexus.emergya.es/nexus/content/repositories/releases</url>
+		</repository>
+		<!-- use the following if you ARE using a snapshot version. -->
+		<repository>
+			<id>nexus.snapshots</id>
+			<name>Nexus Snapshot</name>
+			<url>http://nexus.emergya.es/nexus/content/repositories/snapshots/</url>
+		</repository>
+	</repositories>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<org.springframework.version>3.1.2.RELEASE</org.springframework.version>
+		<org.springframework.ws.version>2.1.1.RELEASE</org.springframework.ws.version>
+		<sir-admin-base-core.version>8.5-SNAPSHOT</sir-admin-base-core.version>
+		<org.apache.axis.version>1.4</org.apache.axis.version>
+		<codegen.consultallaves.wsdl-uri>consultallaves.wsdl</codegen.consultallaves.wsdl-uri>
+		<codegen.consultadatosinversion.wsdl-uri>ConsultaInversionPorLlaveGeoref.wsdl</codegen.consultadatosinversion.wsdl-uri>
+		<codegen.consultallaves.package-name>com.emergya.siradmin.invest.client.keyquery</codegen.consultallaves.package-name>
+		<codegen.consultadatosinversion.package-name>com.emergya.siradmin.invest.client.investmentdata</codegen.consultadatosinversion.package-name>
+		<filter.profile>devel.properties</filter.profile>
+	</properties>
+
+	<build>
+
+		<filters>
+			<filter>src/main/filters/${filter.profile}</filter>
+		</filters>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+
+		</testResources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>axistools-maven-plugin</artifactId>
+				<version>${org.apache.axis.version}</version>
+				<executions>
+					<execution>
+						<id>wsdl2java-llaves</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>wsdl2java</goal>
+						</goals>
+						<configuration>
+							<mappings>
+								<mapping>
+									<namespace>urn:WSConsultaLlaves</namespace>
+									<targetPackage>${codegen.consultallaves.package-name}</targetPackage>
+								</mapping>
+								<mapping>
+									<namespace>urn:WSConsultaInversionPorLlaveGeoref</namespace>
+									<targetPackage>${codegen.consultadatosinversion.package-name}</targetPackage>
+								</mapping>
+							</mappings>
+							<sourceDirectory>${basedir}/src/main/resources</sourceDirectory>
+							<wsdlFiles>
+								<wsdlFile>
+									${codegen.consultallaves.wsdl-uri}
+								</wsdlFile>
+								<wsdlFile>
+									${codegen.consultadatosinversion.wsdl-uri}
+								</wsdlFile>
+							</wsdlFiles>
+						</configuration>
+					</execution>
+
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>axis</groupId>
+						<artifactId>axis</artifactId>
+						<version>${org.apache.axis.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/axistools/wsdl2java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-discovery</groupId>
+			<artifactId>commons-discovery</artifactId>
+			<version>0.5</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.6.3</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>activation</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.axis</groupId>
+			<artifactId>axis</artifactId>
+			<version>${org.apache.axis.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.axis</groupId>
+			<artifactId>axis-jaxrpc</artifactId>
+			<version>${org.apache.axis.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.axis</groupId>
+			<artifactId>axis-saaj</artifactId>
+			<version>${org.apache.axis.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.emergya</groupId>
+			<artifactId>sir-admin-base-core</artifactId>
+			<version>${sir-admin-base-core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${org.springframework.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<profiles>
+		<profile>
+			<id>arica-devel</id>
+			<properties>
+				<filter.profile>arica-devel.properties</filter.profile>
+			</properties>
+		</profile>
+	</profiles>
+</project>
