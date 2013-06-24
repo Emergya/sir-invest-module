@@ -52,15 +52,13 @@ public class AppTest {
 				QName.valueOf("{urn:WSConsultaLlaves}WSConsultaLlaves"));
 	}
 
-	@Test()
-	public void test() throws MalformedURLException, ServiceException,
-			RemoteException {
-		List<ChileindicaInversionDataEntity> result = sessionFactory.getCurrentSession().getNamedQuery("ChileindicaInversionDataEntity.findAll").list();
-		assertTrue(result.size() == 0);
+	@Test
+	public void testProjectShouldBeUpdated() throws MalformedURLException,
+			ServiceException, RemoteException {
 		ChileindicaInversionDataEntity nueva = new ChileindicaInversionDataEntity();
 		Long nuevaId = (Long) sessionFactory.getCurrentSession().save(nueva);
 		assertNotNull(nuevaId);
-		
+
 		WSConsultaLlavesPortType port = service
 				.getWSConsultaLlavesPort(new URL(
 						"http://qaweb.chileindica.cl/ws/consultallaves.php"));
@@ -74,12 +72,14 @@ public class AppTest {
 		assertEquals(BigInteger.valueOf(2013), datosLlamada.getAno());
 		assertEquals(BigInteger.valueOf(15), datosLlamada.getRegion());
 		LlavesInversionData[] llavesInversion = response.getLlavesInversion();
-		for (LlavesInversionData llave : llavesInversion) {
-			LOGGER.debug("Año = " + llave.getAno() + "; C_Institucion = "
-					+ llave.getC_Institucion() + "; C_Preinversion = "
-					+ llave.getC_Preinversion() + "; C_Ficha = "
-					+ llave.getC_Ficha() + "; Fecha_Registro = "
-					+ llave.getFechaRegistro());
+		if (LOGGER.isDebugEnabled()) {
+			for (LlavesInversionData llave : llavesInversion) {
+				LOGGER.debug("Año = " + llave.getAno() + "; C_Institucion = "
+						+ llave.getC_Institucion() + "; C_Preinversion = "
+						+ llave.getC_Preinversion() + "; C_Ficha = "
+						+ llave.getC_Ficha() + "; Fecha_Registro = "
+						+ llave.getFechaRegistro());
+			}
 		}
 
 	}
