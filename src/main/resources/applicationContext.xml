@@ -11,6 +11,7 @@
 	<context:annotation-config />
 	<context:component-scan base-package="com.emergya.ohiggins" />
 	<context:component-scan base-package="com.emergya.persistenceGeo" />
+	<context:component-scan base-package="com.emergya.siradmin.invest" />
 
 	<context:property-placeholder
 		properties-ref="modelProperties" />
@@ -23,8 +24,31 @@
 			<list>
 				<value>classpath:jdbc.properties</value>
 				<value>classpath:hibernate.properties</value>
+				<value>classpath:webservices.properties</value>
 			</list>
 		</property>
+	</bean>
+
+	<bean name="wsConsultaLlavesLocator"
+		class="com.emergya.siradmin.invest.client.keyquery.WSConsultaLlavesLocator">
+		<constructor-arg value="${ws.consultallaves.wsdl}" />
+		<constructor-arg>
+			<bean class="javax.xml.namespace.QName">
+				<constructor-arg value="${ws.consultallaves.qname.namespaceuri}" />
+				<constructor-arg value="${ws.consultallaves.qname.localpart}" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	
+	<bean name="wsConsultaInversion"
+		class="com.emergya.siradmin.invest.client.investmentdata.WSConsultaInversionPorLlaveGeorefLocator">
+		<constructor-arg value="${ws.consultaproyectosgeo.wsdl}" />
+		<constructor-arg>
+			<bean class="javax.xml.namespace.QName">
+				<constructor-arg value="${ws.consultaproyectosgeo.qname.namespaceuri}" />
+				<constructor-arg value="${ws.consultaproyectosgeo.qname.localpart}" />
+			</bean>
+		</constructor-arg>
 	</bean>
 
 
