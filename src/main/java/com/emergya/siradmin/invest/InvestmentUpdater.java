@@ -268,17 +268,20 @@ public class InvestmentUpdater {
 						// Guardamos el proyecto en BBDD con estado error
 						dto.setUpdateStatus(UpdateStatus.WS_ERROR);
 						dto.setLastUpdateTry(Calendar.getInstance().getTime());
-						service.update(dto);
-						iterator.remove();
+						service.update(dto);						
 						foundKey.setStatus(UpdateStatus.WS_ERROR);
 					} catch (ServiceException e) {
 						// Guardamos el proyecto en BBDD con estado error
 						dto.setUpdateStatus(UpdateStatus.WS_ERROR);
 						dto.setLastUpdateTry(Calendar.getInstance().getTime());
-						service.update(dto);
-						iterator.remove();
+						service.update(dto);						
 						foundKey.setStatus(UpdateStatus.WS_ERROR);
-					}
+					} catch(Throwable e) {                            
+                                            dto.setUpdateStatus(UpdateStatus.WS_ERROR);
+                                            dto.setLastUpdateTry(Calendar.getInstance().getTime());
+                                            service.update(dto);	
+                                            foundKey.setStatus(UpdateStatus.WS_ERROR);
+                                        }
 				} else {
 					if (LOGGER.isInfoEnabled()) {
 						LOGGER.info("El proyecto no necesita ser actualizado en BBDD");
@@ -358,7 +361,15 @@ public class InvestmentUpdater {
 							+ llave, e);
 				}
 				llave.setStatus(UpdateStatus.WS_ERROR);
-			}
+			} catch(Throwable e) {                            
+                            if (LOGGER.isErrorEnabled()) {
+					LOGGER.error("Error obteniendo información del proyecto "
+							+ llave, e);
+                            }
+                            llave.setStatus(UpdateStatus.WS_ERROR);
+                        }
+                                
+                                
 		}
 
 	}
@@ -374,7 +385,7 @@ public class InvestmentUpdater {
 			dto.setcEtapaIdi(getAsInteger(inversionData.getC_Etapa_Idi()));
 			dto.setcFicha(getAsInteger(inversionData.getC_Ficha()));
 			dto.setcInstitucion(getAsInteger(inversionData.getC_Institucion()));
-			dto.setCodigo(getAsInteger(inversionData.getCodigo()));
+			dto.setCodigo(inversionData.getCodigo());
 			dto.setCostoTotalAjustadoInversion(inversionData
 					.getCosto_Total_Ajustado_Inversion());
 			dto.setcPreinversion(getAsInteger(inversionData.getC_Preinversion()));
