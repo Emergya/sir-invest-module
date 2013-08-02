@@ -3,8 +3,8 @@
 <types>
 <xsd:schema targetNamespace="urn:WSConsultaLlaves"
 >
- <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/" schemaLocation="http://schemas.xmlsoap.org/soap/encoding/" />
- <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/" schemaLocation="http://schemas.xmlsoap.org/wsdl/" />
+ <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+ <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/" />
  <xsd:complexType name="DatosLlamada">
   <xsd:all>
    <xsd:element name="Ano" type="xsd:integer"/>
@@ -112,7 +112,7 @@
 </binding>
 <service name="WSConsultaLlaves">
   <port name="WSConsultaLlavesPort" binding="tns:WSConsultaLlavesBinding">
-    <soap:address location="http://qaweb.chileindica.cl/ws/consultallaves.php"/>
+    <soap:address location="http://www.chileindica.cl/ws/consultallaves.php"/>
   </port>
 </service>
 </definitions>

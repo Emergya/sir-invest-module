@@ -47,6 +47,7 @@ import org.geotools.geometry.GeometryBuilder;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.CRS;
+import org.geotools.referencing.operation.builder.MathTransformBuilder;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -489,7 +490,7 @@ public class InvestmentUpdater {
 			throws NoSuchAuthorityCodeException, FactoryException,
 			MismatchedDimensionException, TransformException {
 		CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:" + srs);
-		CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
+		CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326",true);
 		boolean lenient = true; // allow for some error due to different datums
 		MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS,
 				lenient);
@@ -516,7 +517,8 @@ public class InvestmentUpdater {
 		ls.setSRID(srs);
 
 		Geometry result = JTS.transform(ls, transform);
-
+		result.setSRID(4326);
+		
 		return result;
 	}
 
@@ -527,15 +529,19 @@ public class InvestmentUpdater {
 		int ejeX = Integer.valueOf(coordenada.getEjeX());
 		int ejeY = Integer.valueOf(coordenada.getEjeY());
 		CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:" + srs);
-		CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
+		CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326",true);
 		boolean lenient = true; // allow for some error due to different datums
 		MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS,
 				lenient);
+		
 		GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
 		Point p = geometryFactory.createPoint(new Coordinate(ejeX, ejeY));
 		p.setSRID(srs);
 
 		Geometry result = JTS.transform(p, transform);
+		
+		
+		result.setSRID(4326);
 
 		return result;
 	}
