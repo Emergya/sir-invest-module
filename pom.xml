@@ -4,7 +4,7 @@
 
 	<groupId>com.emergya.siradmin.invest</groupId>
 	<artifactId>investment-ws-updater</artifactId>
-	<version>9.2-SNAPSHOT</version>
+	<version>9.2</version>
 	<packaging>jar</packaging>
 
 	<name>Invest WS Updater</name>
@@ -88,7 +88,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<org.springframework.version>3.1.2.RELEASE</org.springframework.version>
 		<org.springframework.ws.version>2.1.1.RELEASE</org.springframework.ws.version>
-		<sir-admin-base-core.version>9.2-SNAPSHOT</sir-admin-base-core.version>
+		<sir-admin-base-core.version>${project.version}</sir-admin-base-core.version>
 		<org.apache.axis.version>1.4</org.apache.axis.version>
 		<codegen.consultallaves.wsdl-uri>consultallaves.wsdl</codegen.consultallaves.wsdl-uri>
 		<codegen.consultadatosinversion.wsdl-uri>ConsultaInversionPorLlaveGeoref.wsdl</codegen.consultadatosinversion.wsdl-uri>
