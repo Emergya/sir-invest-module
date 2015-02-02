@@ -4,7 +4,7 @@
 
 	<groupId>com.emergya.siradmin.invest</groupId>
 	<artifactId>investment-ws-updater</artifactId>
-	<version>9.5-SNAPSHOT</version>
+	<version>10.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Invest WS Updater</name>
@@ -123,9 +123,9 @@
 				<version>2.0.3</version>
 				<configuration>
 					<driver>org.postgresql.Driver</driver>
-					<url>jdbc:postgresql://postgresql-apps.emergya.es:5434/arica_db</url>
-					<user>arica</user>
-					<password>arica</password>
+					<url>jdbc:postgresql://subdere-sir.emergya.es:5432/subdere_db</url>
+					<user>subdere</user>
+					<password>subdere</password>
 					<schemas>
 						<schema>ohiggins</schema>
 					</schemas>
@@ -315,9 +315,9 @@
 	</dependencies>
 	<profiles>
 		<profile>
-			<id>arica-devel</id>
+			<id>subdere-devel</id>
 			<properties>
-				<filter.profile>arica-devel.properties</filter.profile>
+				<filter.profile>subdere-devel.properties</filter.profile>
 			</properties>
 		</profile>
 	</profiles>
