@@ -1,128 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
-		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-
-
-	<context:annotation-config />
-	<context:component-scan base-package="com.emergya.ohiggins" />
-	<context:component-scan base-package="com.emergya.persistenceGeo" />
-	<context:component-scan base-package="com.emergya.siradmin.invest" />
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
 	<context:property-placeholder
-		properties-ref="modelProperties" />
+		properties-ref="webProperties" />
 
-
-
-	<bean id="modelProperties"
+	<bean id="webProperties"
 		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 		<property name="locations">
 			<list>
-				<value>classpath:jdbc.properties</value>
+				<value>classpath:application.properties</value>
+				<value>classpath:database.properties</value>
 				<value>classpath:hibernate.properties</value>
-				<value>classpath:webservices.properties</value>
+				<value>classpath:shpDatabase.properties</value>
+				<value>classpath:multiSirRegionsDatabases.properties</value>
+				<value>classpath:geoserver.properties</value>
 			</list>
 		</property>
 	</bean>
 
-	<bean name="wsConsultaLlavesLocator"
-		class="com.emergya.siradmin.invest.client.keyquery.WSConsultaLlavesLocator">
-		<constructor-arg value="${ws.consultallaves.wsdl}" />
-		<constructor-arg>
-			<bean class="javax.xml.namespace.QName">
-				<constructor-arg value="${ws.consultallaves.qname.namespaceuri}" />
-				<constructor-arg value="${ws.consultallaves.qname.localpart}" />
-			</bean>
-		</constructor-arg>
+	<context:annotation-config />
+	<context:component-scan base-package="com.emergya.ohiggins" />
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:messages" />
+		<property name="defaultEncoding" value="${source.encoding}" />
 	</bean>
-	
-	<bean name="wsConsultaInversion"
-		class="com.emergya.siradmin.invest.client.investmentdata.WSConsultaInversionPorLlaveGeorefLocator">
-		<constructor-arg value="${ws.consultaproyectosgeo.wsdl}" />
-		<constructor-arg>
-			<bean class="javax.xml.namespace.QName">
-				<constructor-arg value="${ws.consultaproyectosgeo.qname.namespaceuri}" />
-				<constructor-arg value="${ws.consultaproyectosgeo.qname.localpart}" />
-			</bean>
-		</constructor-arg>
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+
+		<!-- one of the properties available; the maximum file size in bytes -->
+		<property name="maxUploadSize" value="104857600" />
 	</bean>
 
-
-	<!-- ============================== -->
-	<!-- ========== DAO layer ======== -->
-	<!-- ============================== -->
-
-	<!-- Ohiggins instancer -->
-	<bean id="instancer" class="com.emergya.ohiggins.model.InstancerImpl" />
-
-	<!-- Hibernate -->
-	<tx:annotation-driven />
-	<bean id="dataSourceHibernate" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName">
-			<value>${database.jdbc.driverClass}</value>
-		</property>
-		<property name="url">
-			<value>${database.jdbc.url}</value>
-		</property>
-		<property name="username">
-			<value>${database.jdbc.user}</value>
-		</property>
-		<property name="password">
-			<value>${database.jdbc.password}</value>
-		</property>
-		<property name="removeAbandonedTimeout" value="1" />
-		<property name="removeAbandoned" value="true" />
-	</bean>
-	<bean id="transactionManager"
-		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
-
-
-	<bean id="flyway" class="com.googlecode.flyway.core.Flyway"
-		init-method="migrate">
-		<property name="dataSource" ref="dataSourceHibernate" />
-		<property name="schemas">
-			<array>
-				<value>${database.hibernate.default_schema}</value>
-			</array>
-		</property>
-	</bean>
-
-
-	<!-- Must be run after Flyway to ensure the database is compatible with 
-		the code -->
-	<bean id="sessionFactory"
-		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean"
-		depends-on="flyway">
-		<property name="dataSource" ref="dataSourceHibernate" />
-		<property name="packagesToScan">
-			<list>
-				<value>com.emergya.ohiggins</value>
-			</list>
-		</property>
-		<property name="hibernateProperties">
+	<bean
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<!-- view name resolved using bean of type InternalResourceViewResolver
+			(declared in mvc-view-config.xml) -->
+		<property name="defaultErrorView" value="exception" />
+		<!-- results into 'WEB-INF/jsp/exception.jsp' -->
+		<property name="warnLogCategory" value="warn" />
+		<!-- needed otherwise exceptions won't be logged anywhere -->
+		<property name="exceptionMappings">
 			<props>
-				<prop key="hibernate.dialect">${database.hibernate.dialect}</prop>
-				<prop key="hibernate.default_schema">${database.hibernate.default_schema}
-				</prop>
-				<prop key="hibernate.show_sql">${database.hibernate.show_sql}</prop>
-				<prop key="hibernate.hbm2ddl.auto">${database.hibernate.hbm2ddl.auto}</prop>
-				<prop key="hibernate.connection.characterEncoding">${database.hibernate.connection.characterEncoding}
-				</prop>
-				<prop key="hibernate.cache.use_query_cache">true</prop>
-				<prop key="hibernate.max_fetch_depth">4</prop>
-				<prop key="hibernate.cache.use_second_level_cache">true</prop>
-				<prop key="hibernate.cache.use_query_cache">true</prop>
-				<prop key="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.EhCacheRegionFactory
-				</prop>
+				<prop key="org.springframework.security.access.AccessDeniedException">accessDenied</prop>
 			</props>
 		</property>
 	</bean>
 
+	<!-- JSR 303 Validator Factory Bean -->
+	<bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+
+
+	<bean class="java.lang.Boolean" id="secureRestRequest">
+		<constructor-arg value="false" />
+	</bean>
 </beans>
