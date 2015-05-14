@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.emergya.ohiggins" />
+	<context:component-scan base-package="com.emergya.persistenceGeo" />
+	<context:component-scan base-package="com.emergya.chileIndica" />
+	<context:component-scan base-package="com.emergya.multisir" />
+	<context:component-scan base-package="com.emergya.siradmin" />
+	
+	<context:property-placeholder
+		properties-ref="webProperties" />
+
+	<bean id="webProperties"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations">
+			<list>
+				<value>classpath:application.properties</value>
+				<value>classpath:database.properties</value>
+				<value>classpath:hibernate.properties</value>
+				<value>classpath:geoserver.properties</value>
+				<value>classpath:shpDatabase.properties</value>
+				<value>classpath:webservices.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<context:property-placeholder
+		properties-ref="modelProperties" />
+
+	<bean class="java.lang.String" id="chareacterEncoding">
+		<constructor-arg type="String" value="${source.encoding}" />
+	</bean>
+
+	<bean id="modelProperties"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations">
+			<list>
+				<value>classpath:application.properties</value>
+				<value>classpath:database.properties</value>
+				<value>classpath:hibernate.properties</value>
+				<value>classpath:shpDatabase.properties</value>
+				<value>classpath:multiSirRegionsDatabases.properties</value>
+				<value>classpath:geoserver.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean class="com.emergya.persistenceGeo.utils.GsRestApiConfigurationImpl">
+        <property name="serverUrl" value="http://subdere-sir.emergya.es/geoserver" />
+        <property name="adminUsername" value="admin" />
+        <property name="adminPassword" value="geoserver" />
+        <property name="dbHost" value="localhost" />
+        <property name="dbPort" value="5432" />
+        <property name="dbSchema" value="ohiggins" />
+        <property name="dbName" value="subdere_db" />
+        <property name="dbUser" value="subdere" />
+        <property name="dbPassword" value="subdere" />
+        <property name="dbType" value="postgis"/>
+        <property name="jndiReferenceName" value="java:comp/env/jdbc/subdere_db"/>
+        <property name="datasourceType" value="PostGIS (JNDI)" />
+    </bean>
+    
+    <bean
+        class="com.emergya.persistenceGeo.utils.GeographicDatabaseConfiguration">
+        <property name="postgresHost" value="${shp.database.host}" />
+        <property name="postgresPort" value="${shp.database.port}" />
+        <property name="databaseName" value="${shp.database.name}" />
+        <property name="postgresUser" value="${shp.database.user}" />
+        <property name="postgresPassword" value="${shp.database.password}" />
+        <property name="geomColumn" value="geom" />
+        <property name="schema" value="${shp.database.schema}" />
+        <property name="destSrid" value="32719" />
+    </bean>
+    
+	<bean class="com.emergya.persistenceGeo.dao.impl.GeoserverGsManagerDaoImpl"
+		name="geoserverDao">
+	</bean>
+	<bean class="com.emergya.persistenceGeo.service.impl.GeoserverServiceImpl"
+		name="geoserverService"></bean>
+		
+	
+	<!-- Ohiggins instancer -->
+	<bean id="instancer" class="com.emergya.ohiggins.model.InstancerImpl" />
+	
+	<!-- Hibernate -->
+	<tx:annotation-driven />
+	<bean id="dataSourceHibernate" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName">
+			<value>org.postgresql.Driver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:postgresql://localhost:5432/subdere_db</value>
+		</property>
+		<property name="username">
+			<value>subdere</value>
+		</property>
+		<property name="password">
+			<value>subdere</value>
+		</property>
+		<property name="removeAbandonedTimeout" value="1" />
+		<property name="removeAbandoned" value="true" />
+	</bean>
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean name="excelDao" class="com.emergya.ohiggins.dao.impl.ExcelJdbcDaoImpl">
+		<property name="dataSource" ref="dataSourceHibernate" />
+	</bean>
+
+	<bean id="flyway" class="com.googlecode.flyway.core.Flyway"
+		init-method="migrate">
+		<property name="dataSource" ref="dataSourceHibernate" />
+		<property name="schemas">
+			<array>
+				<value>${database.hibernate.default_schema}</value>
+			</array>
+		</property>
+	</bean>
+
+
+	<!-- Must be run after Flyway to ensure the database is compatible with
+		the code -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean"
+		depends-on="flyway">
+		<property name="dataSource" ref="dataSourceHibernate" />
+		<property name="packagesToScan">
+			<list>
+				<value>com.emergya.ohiggins</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernatespatial.postgis.PostgisDialect</prop>
+				<prop key="hibernate.default_schema">${database.hibernate.default_schema}
+				</prop>
+				<prop key="hibernate.show_sql">${database.hibernate.show_sql}</prop>
+				<prop key="hibernate.hbm2ddl.auto">validate</prop>
+				<prop key="hibernate.connection.characterEncoding">${database.hibernate.connection.characterEncoding}
+				</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<prop key="hibernate.max_fetch_depth">4</prop>
+				<prop key="hibernate.cache.use_second_level_cache">true</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<prop key="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.EhCacheRegionFactory
+				</prop>
+
+			</props>
+		</property>
+	</bean>
+
+	<!-- ============================== -->
+	<!-- =========== MUltiSIR ========= -->
+	<!-- ============================== -->
+
+	<bean id="region" class="com.emergya.persistenceGeo.bean.RegionBean" scope="session">
+		<aop:scoped-proxy />
+	</bean>
+
+	<bean id="regionDBContext" class="com.emergya.persistenceGeo.dao.impl.RegionDatabasesContextHolderImpl">
+		<!-- <aop:scoped-proxy /> -->
+	</bean>
+
+	<!-- MultiSIR databases connections -->
+	<bean id="parentSIRDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close" abstract="true">
+		<property name="driverClassName" value="org.postgresql.Driver" />
+	</bean>
+
+	<!-- DEFAULT -->
+	<bean id="defaultSIRDataSource" parent="parentSIRDataSource">
+		<property name="url" value="jdbc:postgresql://localhost:5432/subdere_db" />
+		<property name="username" value="subdere" />
+		<property name="password" value="subdere" />
+	</bean>
+
+	<!-- ARICA -->
+	<bean id="aricaSIRDataSource" parent="parentSIRDataSource">
+		<property name="url" value="jdbc:postgresql://localhost:5432/arica_db" />
+		<property name="username" value="subdere" />
+		<property name="password" value="subdere" />
+	</bean>
+
+	<!-- OHIGGINS -->
+	<bean id="ohigginsSIRDataSource" parent="parentSIRDataSource">
+		<property name="url" value="jdbc:postgresql://localhost:5432/ohiggins_db" />
+		<property name="username" value="subdere" />
+		<property name="password" value="subdere" />
+	</bean>
+
+
+	<bean id="multiSIRDataSource" class="com.emergya.persistenceGeo.dao.impl.MultiSirRoutinDataSource">
+		<property name="targetDataSources">
+			<map key-type="com.emergya.persistenceGeo.dao.MultiSirRegionDatabase">
+				<entry key="ARICA" value-ref="aricaSIRDataSource"/>
+				<entry key="OHIGGINS" value-ref="ohigginsSIRDataSource" />
+			</map>
+		</property>
+		<property name="defaultTargetDataSource" ref="defaultSIRDataSource" />
+	</bean>
+
+	<bean id="sessionFactoryMultiSIRDataSource"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource" ref="multiSIRDataSource" />
+		<property name="packagesToScan">
+			<list>
+				<value>com.emergya.ohiggins</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernatespatial.postgis.PostgisDialect</prop>
+				<prop key="hibernate.default_schema">${database.hibernate.default_schema}</prop>
+				<prop key="hibernate.show_sql">${database.hibernate.show_sql}</prop>
+				<prop key="hibernate.hbm2ddl.auto">validate</prop>
+				<prop key="hibernate.connection.characterEncoding">${database.hibernate.connection.characterEncoding}
+				</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<prop key="hibernate.max_fetch_depth">4</prop>
+				<prop key="hibernate.cache.use_second_level_cache">true</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<prop key="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.EhCacheRegionFactory
+				</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="multiSIRDatabaseTransactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactoryMultiSIRDataSource" />
+	</bean>
+
+	<!-- CHILE INDICA LDAP CONFIGURATION -->
+	<bean id="contextSourceTarget" class="org.springframework.ldap.core.support.LdapContextSource">
+		<property name="url" value="ldap://ldap-subdere-sir:389" />
+		<property name="base" value="dc=chileindica,dc=cl" />
+		<property name="userDn" value="cn=admin,dc=chileindica,dc=cl" />
+		<property name="password" value="secret" />
+		<property name="baseEnvironmentProperties">
+			<map>
+				<entry key="java.naming.referral" value="follow" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="contextSource"
+            class="org.springframework.ldap.transaction.compensating.manager.TransactionAwareContextSourceProxy">
+      <constructor-arg ref="contextSourceTarget" />
+   	</bean>
+
+	<bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
+    	<constructor-arg ref="contextSource" />
+	</bean>
+
+	<!-- TRANSACTIONAL LDAP AND HIBERNATE CONFIGURATION -->
+	<bean id="ldapHibernateTransactionManager" 
+		class="org.springframework.ldap.transaction.compensating.manager.ContextSourceAndHibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactoryMultiSIRDataSource" />
+		<property name="contextSource" ref="contextSource"/>
+		<property name="renamingStrategy">
+            <bean class="org.springframework.ldap.transaction.compensating.support.DefaultTempEntryRenamingStrategy" />
+        </property>
+	</bean>
+	<tx:annotation-driven transaction-manager="ldapHibernateTransactionManager" proxy-target-class="false" />
+	
+		<!-- ChileIndica databases connections -->
+	<bean id="parentDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close" abstract="true">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+	</bean>
+
+	<!-- ARICA -->
+	<bean id="aricaDataSource" parent="parentDataSource">
+		<property name="url" value="jdbc:mysql://10.35.3.111:3306/arica_sir"/>
+		<property name="username" value="arica_sir" />
+		<property name="password" value="arica_sir" />
+	</bean>
+
+	<!-- OHIGGINS -->
+	<bean id="ohigginsDataSource" parent="parentDataSource">
+		<property name="url" value="jdbc:mysql://10.35.3.111:3306/ohiggins_sir" />
+		<property name="username" value="ohiggins_sir" />
+		<property name="password" value="ohiggins_sir" />
+	</bean>
+
+	<!-- Chile Indica routing configuration -->
+
+	<bean id="chileIndicaDataSource"
+		class="com.emergya.chileIndica.dao.impl.ChileIndicaRoutinDataSource">
+		<property name="targetDataSources">
+			<map key-type="com.emergya.chileIndica.dao.ChileIndicaRegionDatabase">
+				<!-- <entry key="ARICA" value-ref="aricaDataSource"/> -->
+				<entry key="OHIGGINS" value-ref="ohigginsDataSource" />
+			</map>
+		</property>
+		<property name="defaultTargetDataSource" ref="aricaDataSource" />
+	</bean>
+
+	<bean id="sessionFactoryChileIndicaDataSource"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource" ref="chileIndicaDataSource" />
+		<property name="packagesToScan">
+			<list>
+				<value>com.emergya.chileIndica</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<!-- <prop key="hibernate.default_schema">${database.hibernate.default_schema} -->
+				<!-- </prop> -->
+				<prop key="hibernate.show_sql">${database.hibernate.show_sql}</prop>
+				<prop key="hibernate.hbm2ddl.auto">validate</prop>
+				<prop key="hibernate.connection.characterEncoding">${database.hibernate.connection.characterEncoding}
+				</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<prop key="hibernate.max_fetch_depth">4</prop>
+				<prop key="hibernate.cache.use_second_level_cache">true</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<prop key="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.EhCacheRegionFactory
+				</prop>
+
+			</props>
+		</property>
+	</bean>
+
+	<bean id="chileIndicaDatabaseTransactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactoryChileIndicaDataSource" />
+	</bean>
+
+</beans>
