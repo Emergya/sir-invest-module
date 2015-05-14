@@ -113,6 +113,10 @@
 			<testResource>
 				<directory>src/test/resources</directory>
 				<filtering>true</filtering>
+				<includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.properties</include>
+                </includes>
 			</testResource>
 
 		</testResources>
@@ -141,70 +145,70 @@
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>axistools-maven-plugin</artifactId>
-				<version>${org.apache.axis.version}</version>
-				<executions>
-					<execution>
-						<id>wsdl2java-llaves</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>wsdl2java</goal>
-						</goals>
-						<configuration>
-							<mappings>
-								<mapping>
-									<namespace>urn:WSConsultaLlaves</namespace>
-									<targetPackage>${codegen.consultallaves.package-name}</targetPackage>
-								</mapping>
-								<mapping>
-									<namespace>urn:WSConsultaInversionPorLlaveGeoref</namespace>
-									<targetPackage>${codegen.consultadatosinversion.package-name}</targetPackage>
-								</mapping>
-							</mappings>
-							<sourceDirectory>${basedir}/src/main/resources</sourceDirectory>
-							<wsdlFiles>
-								<wsdlFile>
-									${codegen.consultallaves.wsdl-uri}
-								</wsdlFile>
-								<wsdlFile>
-									${codegen.consultadatosinversion.wsdl-uri}
-								</wsdlFile>
-							</wsdlFiles>
-						</configuration>
-					</execution>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.codehaus.mojo</groupId> -->
+<!-- 				<artifactId>axistools-maven-plugin</artifactId> -->
+<!-- 				<version>${org.apache.axis.version}</version> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<id>wsdl2java-llaves</id> -->
+<!-- 						<phase>generate-sources</phase> -->
+<!-- 						<goals> -->
+<!-- 							<goal>wsdl2java</goal> -->
+<!-- 						</goals> -->
+<!-- 						<configuration> -->
+<!-- 							<mappings> -->
+<!-- 								<mapping> -->
+<!-- 									<namespace>urn:WSConsultaLlaves</namespace> -->
+<!-- 									<targetPackage>${codegen.consultallaves.package-name}</targetPackage> -->
+<!-- 								</mapping> -->
+<!-- 								<mapping> -->
+<!-- 									<namespace>urn:WSConsultaInversionPorLlaveGeoref</namespace> -->
+<!-- 									<targetPackage>${codegen.consultadatosinversion.package-name}</targetPackage> -->
+<!-- 								</mapping> -->
+<!-- 							</mappings> -->
+<!-- 							<sourceDirectory>${basedir}/src/main/resources</sourceDirectory> -->
+<!-- 							<wsdlFiles> -->
+<!-- 								<wsdlFile> -->
+<!-- 									${codegen.consultallaves.wsdl-uri} -->
+<!-- 								</wsdlFile> -->
+<!-- 								<wsdlFile> -->
+<!-- 									${codegen.consultadatosinversion.wsdl-uri} -->
+<!-- 								</wsdlFile> -->
+<!-- 							</wsdlFiles> -->
+<!-- 						</configuration> -->
+<!-- 					</execution> -->
 
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>axis</groupId>
-						<artifactId>axis</artifactId>
-						<version>${org.apache.axis.version}</version>
-					</dependency>
-				</dependencies>
-			</plugin>
+<!-- 				</executions> -->
+<!-- 				<dependencies> -->
+<!-- 					<dependency> -->
+<!-- 						<groupId>axis</groupId> -->
+<!-- 						<artifactId>axis</artifactId> -->
+<!-- 						<version>${org.apache.axis.version}</version> -->
+<!-- 					</dependency> -->
+<!-- 				</dependencies> -->
+<!-- 			</plugin> -->
 
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.1</version>
-				<executions>
-					<execution>
-						<id>add-source</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>${project.build.directory}/generated-sources/axistools/wsdl2java</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.codehaus.mojo</groupId> -->
+<!-- 				<artifactId>build-helper-maven-plugin</artifactId> -->
+<!-- 				<version>1.1</version> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<id>add-source</id> -->
+<!-- 						<phase>generate-sources</phase> -->
+<!-- 						<goals> -->
+<!-- 							<goal>add-source</goal> -->
+<!-- 						</goals> -->
+<!-- 						<configuration> -->
+<!-- 							<sources> -->
+<!-- 								<source>${project.build.directory}/generated-sources/axistools/wsdl2java</source> -->
+<!-- 							</sources> -->
+<!-- 						</configuration> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 			</plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -312,6 +316,16 @@
 			<version>${org.springframework.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.5.0</version>
+        </dependency>
 	</dependencies>
 	<profiles>
 		<profile>
