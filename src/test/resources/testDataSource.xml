@@ -187,12 +187,20 @@
 	</bean>
 
 	<!-- ARICA -->
+	
 	<bean id="aricaSIRDataSource" parent="parentSIRDataSource">
 		<property name="url" value="jdbc:postgresql://localhost:5432/arica_db" />
 		<property name="username" value="subdere" />
 		<property name="password" value="subdere" />
 	</bean>
-
+	<!--  
+	<bean id="aricaSIRDataSource" parent="parentSIRDataSource">
+		<property name="url" value="jdbc:postgresql://10.35.3.111:5432/arica_db" />
+		<property name="username" value="subdere" />
+		<property name="password" value="subdere" />
+	</bean>
+	-->
+	
 	<!-- OHIGGINS -->
 	<bean id="ohigginsSIRDataSource" parent="parentSIRDataSource">
 		<property name="url" value="jdbc:postgresql://localhost:5432/ohiggins_db" />
