@@ -55,38 +55,44 @@
 		</property>
 	</bean>
 	
-	<bean class="com.emergya.persistenceGeo.utils.GsRestApiConfigurationImpl">
-        <property name="serverUrl" value="http://subdere-sir.emergya.es/geoserver" />
-        <property name="adminUsername" value="admin" />
-        <property name="adminPassword" value="geoserver" />
-        <property name="dbHost" value="localhost" />
-        <property name="dbPort" value="5432" />
-        <property name="dbSchema" value="ohiggins" />
-        <property name="dbName" value="subdere_db" />
-        <property name="dbUser" value="subdere" />
-        <property name="dbPassword" value="subdere" />
-        <property name="dbType" value="postgis"/>
-        <property name="jndiReferenceName" value="java:comp/env/jdbc/subdere_db"/>
-        <property name="datasourceType" value="PostGIS (JNDI)" />
+	<bean class="com.emergya.persistenceGeo.utils.GsRestApiConfigurationImpl"  scope="request">
+		<aop:scoped-proxy />
+        <constructor-arg index="0" value="http://subdere-sir.emergya.es/geoserver" />
+        <constructor-arg index="1" value="admin" />
+        <constructor-arg index="2" value="geoserver" />
+        <constructor-arg index="3" value="subdere-sir.emergya.es" />
+        <constructor-arg index="4" value="5432" />
+        <constructor-arg index="5" value="ohiggins" />
+        <constructor-arg index="6" value="subdere_db" />
+        <constructor-arg index="7" value="subdere" />
+        <constructor-arg index="8" value="subdere" />
+        <constructor-arg index="9" value="postgis"/>
+        <constructor-arg index="10" value="java\:comp/env/jdbc/subdere_datastore"/>
+        <constructor-arg index="11" value="PostGIS (JNDI)" />
+        <constructor-arg index="12" ref="region"  />
     </bean>
     
     <bean
-        class="com.emergya.persistenceGeo.utils.GeographicDatabaseConfiguration">
-        <property name="postgresHost" value="${shp.database.host}" />
-        <property name="postgresPort" value="${shp.database.port}" />
-        <property name="databaseName" value="${shp.database.name}" />
-        <property name="postgresUser" value="${shp.database.user}" />
-        <property name="postgresPassword" value="${shp.database.password}" />
-        <property name="geomColumn" value="geom" />
-        <property name="schema" value="${shp.database.schema}" />
-        <property name="destSrid" value="32719" />
+        class="com.emergya.persistenceGeo.utils.GeographicDatabaseConfiguration" scope="request">
+        <aop:scoped-proxy />
+        <constructor-arg index="0" value="${shp.database.host}" />
+        <constructor-arg index="1" value="${shp.database.port}" />
+        <constructor-arg index="2" value="${shp.database.name}" />
+        <constructor-arg index="3" value="${shp.database.user}" />
+        <constructor-arg index="4" value="${shp.database.password}" />
+        <constructor-arg index="5" value="geom" />
+        <constructor-arg index="6" value="${shp.database.schema}" />
+        <constructor-arg index="7" value="32719" />
+        <constructor-arg index="8" ref="region" />
     </bean>
     
 	<bean class="com.emergya.persistenceGeo.dao.impl.GeoserverGsManagerDaoImpl"
 		name="geoserverDao">
 	</bean>
-	<bean class="com.emergya.persistenceGeo.service.impl.GeoserverServiceImpl"
-		name="geoserverService"></bean>
+	<bean name="geoserverService" class="com.emergya.persistenceGeo.service.impl.GeoserverServiceImpl" scope="request">
+		<aop:scoped-proxy />
+		<constructor-arg index="0" ref="region" />
+	</bean>
 		
 	
 	<!-- Ohiggins instancer -->
@@ -100,7 +106,7 @@
 			<value>org.postgresql.Driver</value>
 		</property>
 		<property name="url">
-			<value>jdbc:postgresql://localhost:5432/subdere_db</value>
+			<value>jdbc:postgresql://subdere-sir.emergya.es:5432/subdere_db</value>
 		</property>
 		<property name="username">
 			<value>subdere</value>
@@ -181,7 +187,7 @@
 
 	<!-- DEFAULT -->
 	<bean id="defaultSIRDataSource" parent="parentSIRDataSource">
-		<property name="url" value="jdbc:postgresql://localhost:5432/subdere_db" />
+		<property name="url" value="jdbc:postgresql://10.35.2.114:5432/subdere_db" />
 		<property name="username" value="subdere" />
 		<property name="password" value="subdere" />
 	</bean>
@@ -189,31 +195,127 @@
 	<!-- ARICA -->
 	
 	<bean id="aricaSIRDataSource" parent="parentSIRDataSource">
-		<property name="url" value="jdbc:postgresql://localhost:5432/arica_db" />
+		<property name="url" value="jdbc:postgresql://10.35.2.114:5432/arica_db" />
 		<property name="username" value="subdere" />
 		<property name="password" value="subdere" />
 	</bean>
-	<!--  
-	<bean id="aricaSIRDataSource" parent="parentSIRDataSource">
-		<property name="url" value="jdbc:postgresql://10.35.3.111:5432/arica_db" />
-		<property name="username" value="subdere" />
-		<property name="password" value="subdere" />
-	</bean>
-	-->
 	
 	<!-- OHIGGINS -->
 	<bean id="ohigginsSIRDataSource" parent="parentSIRDataSource">
-		<property name="url" value="jdbc:postgresql://localhost:5432/ohiggins_db" />
+		<property name="url" value="jdbc:postgresql://10.35.2.114:5432/ohiggins_db" />
 		<property name="username" value="subdere" />
 		<property name="password" value="subdere" />
 	</bean>
 
+	<!-- TARAPACA -->
+	<bean id="tarapacaSIRDataSource" parent="parentSIRDataSource">
+		<property name="url" value="jdbc:postgresql://10.35.2.114:5432/tarapaca_db" />
+		<property name="username" value="subdere" />
+		<property name="password" value="subdere" />
+	</bean>
+
+	<!-- ANTOFAGASTA -->
+	<bean id="antofagastaSIRDataSource" parent="parentSIRDataSource">
+		<property name="url" value="jdbc:postgresql://10.35.2.114:5432/antofagasta_db" />
+		<property name="username" value="subdere" />
+		<property name="password" value="subdere" />
+	</bean>
+
+	<!-- ATACAMA -->
+	<bean id="atacamaSIRDataSource" parent="parentSIRDataSource">
+		<property name="url" value="jdbc:postgresql://10.35.2.114:5432/atacama_db" />
+		<property name="username" value="subdere" />
+		<property name="password" value="subdere" />
+	</bean>
+
+	<!-- COQUIMBO -->
+	<bean id="coquimboSIRDataSource" parent="parentSIRDataSource">
+		<property name="url" value="jdbc:postgresql://10.35.2.114:5432/coquimbo_db" />
+		<property name="username" value="subdere" />
+		<property name="password" value="subdere" />
+	</bean>
+
+	<!-- VALPARAISO -->
+	<bean id="valparaisoSIRDataSource" parent="parentSIRDataSource">
+		<property name="url" value="jdbc:postgresql://10.35.2.114:5432/valparaiso_db" />
+		<property name="username" value="subdere" />
+		<property name="password" value="subdere" />
+	</bean>
+
+	<!-- MAULE -->
+	<bean id="mauleSIRDataSource" parent="parentSIRDataSource">
+		<property name="url" value="jdbc:postgresql://10.35.2.114:5432/maule_db" />
+		<property name="username" value="subdere" />
+		<property name="password" value="subdere" />
+	</bean>
+
+	<!-- BIOBIO -->
+	<bean id="biobioSIRDataSource" parent="parentSIRDataSource">
+		<property name="url" value="jdbc:postgresql://10.35.2.114:5432/biobio_db" />
+		<property name="username" value="subdere" />
+		<property name="password" value="subdere" />
+	</bean>
+
+	<!-- ARAUCANIA -->
+	<bean id="araucaniaSIRDataSource" parent="parentSIRDataSource">
+		<property name="url" value="jdbc:postgresql://10.35.2.114:5432/araucania_db" />
+		<property name="username" value="subdere" />
+		<property name="password" value="subdere" />
+	</bean>
+
+	<!-- RIOS -->
+	<bean id="riosSIRDataSource" parent="parentSIRDataSource">
+		<property name="url" value="jdbc:postgresql://10.35.2.114:5432/rios_db" />
+		<property name="username" value="subdere" />
+		<property name="password" value="subdere" />
+	</bean>
+
+	<!-- LAGOS -->
+	<bean id="lagosSIRDataSource" parent="parentSIRDataSource">
+		<property name="url" value="jdbc:postgresql://10.35.2.114:5432/lagos_db" />
+		<property name="username" value="subdere" />
+		<property name="password" value="subdere" />
+	</bean>
+
+	<!-- AISEN -->
+	<bean id="aisenSIRDataSource" parent="parentSIRDataSource">
+		<property name="url" value="jdbc:postgresql://10.35.2.114:5432/aisen_db" />
+		<property name="username" value="subdere" />
+		<property name="password" value="subdere" />
+	</bean>
+
+	<!-- MAGALLANES -->
+	<bean id="magallanesSIRDataSource" parent="parentSIRDataSource">
+		<property name="url" value="jdbc:postgresql://10.35.2.114:5432/magallanes_db" />
+		<property name="username" value="subdere" />
+		<property name="password" value="subdere" />
+	</bean>
+
+	<!-- SANTIAGO -->
+	<bean id="santiagoSIRDataSource" parent="parentSIRDataSource">
+		<property name="url" value="jdbc:postgresql://10.35.2.114:5432/santiago_db" />
+		<property name="username" value="subdere" />
+		<property name="password" value="subdere" />
+	</bean>
 
 	<bean id="multiSIRDataSource" class="com.emergya.persistenceGeo.dao.impl.MultiSirRoutinDataSource">
 		<property name="targetDataSources">
 			<map key-type="com.emergya.persistenceGeo.dao.MultiSirRegionDatabase">
 				<entry key="ARICA" value-ref="aricaSIRDataSource"/>
 				<entry key="OHIGGINS" value-ref="ohigginsSIRDataSource" />
+				<entry key="TARAPACA" value-ref="tarapacaSIRDataSource" />
+				<entry key="ANTOFAGASTA" value-ref="antofagastaSIRDataSource" />
+				<entry key="ATACAMA" value-ref="atacamaSIRDataSource" />
+				<entry key="COQUIMBO" value-ref="coquimboSIRDataSource" />
+				<entry key="VALPARAISO" value-ref="valparaisoSIRDataSource" />
+				<entry key="MAULE" value-ref="mauleSIRDataSource" />
+				<entry key="BIOBIO" value-ref="biobioSIRDataSource" />
+				<entry key="ARAUCANIA" value-ref="araucaniaSIRDataSource" />
+				<entry key="RIOS" value-ref="riosSIRDataSource" />
+				<entry key="LAGOS" value-ref="lagosSIRDataSource" />
+				<entry key="AISEN" value-ref="aisenSIRDataSource" />
+				<entry key="MAGALLANES" value-ref="magallanesSIRDataSource" />
+				<entry key="SANTIAGO" value-ref="santiagoSIRDataSource" />
 			</map>
 		</property>
 		<property name="defaultTargetDataSource" ref="defaultSIRDataSource" />
@@ -291,16 +393,107 @@
 
 	<!-- ARICA -->
 	<bean id="aricaDataSource" parent="parentDataSource">
-		<property name="url" value="jdbc:mysql://10.35.3.111:3306/arica_sir"/>
+		<property name="url" value="jdbc:mysql://10.35.2.114:3306/arica_sir"/>
 		<property name="username" value="arica_sir" />
 		<property name="password" value="arica_sir" />
 	</bean>
 
 	<!-- OHIGGINS -->
 	<bean id="ohigginsDataSource" parent="parentDataSource">
-		<property name="url" value="jdbc:mysql://10.35.3.111:3306/ohiggins_sir" />
+		<property name="url" value="jdbc:mysql://10.35.2.114:3306/ohiggins_sir" />
 		<property name="username" value="ohiggins_sir" />
 		<property name="password" value="ohiggins_sir" />
+	</bean>
+
+	<!-- TARAPACA -->
+	<bean id="tarapacaDataSource" parent="parentDataSource">
+		<property name="url" value="jdbc:mysql://10.35.2.114:3306/tarapaca_sir" />
+		<property name="username" value="tarapaca_sir" />
+		<property name="password" value="tarapaca_sir" />
+	</bean>
+
+	<!-- ANTOFAGASTA -->
+	<bean id="antofagastaDataSource" parent="parentDataSource">
+		<property name="url" value="jdbc:mysql://10.35.2.114:3306/antofagasta_sir" />
+		<property name="username" value="antofagasta_sir" />
+		<property name="password" value="antofagasta_sir" />
+	</bean>
+
+	<!-- ATACAMA -->
+	<bean id="atacamaDataSource" parent="parentDataSource">
+		<property name="url" value="jdbc:mysql://10.35.2.114:3306/atacama_sir" />
+		<property name="username" value="atacama_sir" />
+		<property name="password" value="atacama_sir" />
+	</bean>
+
+	<!-- COQUIMBO -->
+	<bean id="coquimboDataSource" parent="parentDataSource">
+		<property name="url" value="jdbc:mysql://10.35.2.114:3306/coquimbo_sir" />
+		<property name="username" value="coquimbo_sir" />
+		<property name="password" value="coquimbo_sir" />
+	</bean>
+
+	<!-- VALPARAISO -->
+	<bean id="valparaisoDataSource" parent="parentDataSource">
+		<property name="url" value="jdbc:mysql://10.35.2.114:3306/valparaiso_sir" />
+		<property name="username" value="valparaiso_sir" />
+		<property name="password" value="valparaiso_sir" />
+	</bean>
+
+	<!-- MAULE -->
+	<bean id="mauleDataSource" parent="parentDataSource">
+		<property name="url" value="jdbc:mysql://10.35.2.114:3306/maule_sir" />
+		<property name="username" value="maule_sir" />
+		<property name="password" value="maule_sir" />
+	</bean>
+
+	<!-- BIOBIO -->
+	<bean id="biobioDataSource" parent="parentDataSource">
+		<property name="url" value="jdbc:mysql://10.35.2.114:3306/biobio_sir" />
+		<property name="username" value="biobio_sir" />
+		<property name="password" value="biobio_sir" />
+	</bean>
+
+	<!-- ARAUCANIA -->
+	<bean id="araucaniaDataSource" parent="parentDataSource">
+		<property name="url" value="jdbc:mysql://10.35.2.114:3306/araucania_sir" />
+		<property name="username" value="araucania_sir" />
+		<property name="password" value="araucania_sir" />
+	</bean>
+
+	<!-- RIOS -->
+	<bean id="riosDataSource" parent="parentDataSource">
+		<property name="url" value="jdbc:mysql://10.35.2.114:3306/rios_sir" />
+		<property name="username" value="rios_sir" />
+		<property name="password" value="rios_sir" />
+	</bean>
+
+	<!-- LAGOS -->
+	<bean id="lagosDataSource" parent="parentDataSource">
+		<property name="url" value="jdbc:mysql://10.35.2.114:3306/lagos_sir" />
+		<property name="username" value="lagos_sir" />
+		<property name="password" value="lagos_sir" />
+	</bean>
+
+	<!-- AISEN -->
+	<bean id="aisenDataSource" parent="parentDataSource">
+		<property name="url" value="jdbc:mysql://10.35.2.114:3306/aisen_sir" />
+		<property name="username" value="aisen_sir" />
+		<property name="password" value="aisen_sir" />
+	</bean>
+
+	<!-- MAGALLANES -->
+	<bean id="magallanesDataSource" parent="parentDataSource">
+		<property name="url" value="jdbc:mysql://10.35.2.114:3306/magallanes_sir" />
+		<property name="username" value="magallanes_sir" />
+		<property name="password" value="magallanes_sir" />
+	</bean>
+
+	<!-- SANTIAGO -->
+	<bean id="santiagoDataSource" parent="parentDataSource">
+		<property name="url" value="jdbc:mysql://10.35.2.114:3306/santiago_sir" />
+		<property name="username" value="santiago_sir" />
+		<property name="password" value="santiago_sir" />
 	</bean>
 
 	<!-- Chile Indica routing configuration -->
@@ -309,8 +502,21 @@
 		class="com.emergya.chileIndica.dao.impl.ChileIndicaRoutinDataSource">
 		<property name="targetDataSources">
 			<map key-type="com.emergya.chileIndica.dao.ChileIndicaRegionDatabase">
-				<!-- <entry key="ARICA" value-ref="aricaDataSource"/> -->
+				<!--  <entry key="ARICA" value-ref="aricaDataSource"/> -->
 				<entry key="OHIGGINS" value-ref="ohigginsDataSource" />
+				<entry key="TARAPACA" value-ref="tarapacaDataSource" />
+				<entry key="ANTOFAGASTA" value-ref="antofagastaDataSource" />
+				<entry key="ATACAMA" value-ref="atacamaDataSource" />
+				<entry key="COQUIMBO" value-ref="coquimboDataSource" />
+				<entry key="VALPARAISO" value-ref="valparaisoDataSource" />
+				<entry key="MAULE" value-ref="mauleDataSource" />
+				<entry key="BIOBIO" value-ref="biobioDataSource" />
+				<entry key="ARAUCANIA" value-ref="araucaniaDataSource" />
+				<entry key="RIOS" value-ref="riosDataSource" />
+				<entry key="LAGOS" value-ref="lagosDataSource" />
+				<entry key="AISEN" value-ref="aisenDataSource" />
+				<entry key="MAGALLANES" value-ref="magallanesDataSource" />
+				<entry key="SANTIAGO" value-ref="santiagoDataSource" />
 			</map>
 		</property>
 		<property name="defaultTargetDataSource" ref="aricaDataSource" />
@@ -348,5 +554,13 @@
 		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactoryChileIndicaDataSource" />
 	</bean>
+	
+	<!-- Rest template (used in bridge communication) -->
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+        <property name="errorHandler" ref="customResponseErrorHandler"></property>
+    </bean>
+
+    <!-- Bridge error handler -->
+    <bean id="customResponseErrorHandler" class="com.emergya.siradmin.invest.util.WSResponseErrorHandler"/>
 
 </beans>

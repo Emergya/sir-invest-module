@@ -1,50 +1,38 @@
 package com.emergya.siradmin.invest.util;
 
-import java.math.BigInteger;
+import org.springframework.http.HttpStatus;
 
 public class WSCallException extends RuntimeException {
 
 	private static final long serialVersionUID = 6825887152567891013L;
-	private BigInteger codigoRespuesta;
-	private String textoRespuesta;
+	
+	private HttpStatus statusCode;
+    private String body;
 
-	public WSCallException() {
+    public WSCallException(String msg) {
+        super(msg);
+        // TODO Auto-generated constructor stub
+    }
 
-	}
+    public WSCallException(HttpStatus statusCode, String body, String msg) {
+        super(msg);
+        this.statusCode = statusCode;
+        this.body = body;
+    }
 
-	public WSCallException(String message) {
-		super(message);
-	}
+    public HttpStatus getStatusCode() {
+        return statusCode;
+    }
 
-	public WSCallException(Throwable cause) {
-		super(cause);
+    public void setStatusCode(HttpStatus statusCode) {
+        this.statusCode = statusCode;
+    }
 
-	}
+    public String getBody() {
+        return body;
+    }
 
-	public WSCallException(String message, Throwable cause) {
-		super(message, cause);
-
-	}
-
-	public WSCallException(BigInteger codigoRespuesta, String textoRespuesta) {
-		this.setCodigoRespuesta(codigoRespuesta);
-		this.setTextoRespuesta(textoRespuesta);
-	}
-
-	public BigInteger getCodigoRespuesta() {
-		return codigoRespuesta;
-	}
-
-	public void setCodigoRespuesta(BigInteger codigoRespuesta) {
-		this.codigoRespuesta = codigoRespuesta;
-	}
-
-	public String getTextoRespuesta() {
-		return textoRespuesta;
-	}
-
-	public void setTextoRespuesta(String textoRespuesta) {
-		this.textoRespuesta = textoRespuesta;
-	}
-
+    public void setBody(String body) {
+        this.body = body;
+    }
 }

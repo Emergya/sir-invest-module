@@ -334,5 +334,11 @@
 				<filter.profile>subdere-devel.properties</filter.profile>
 			</properties>
 		</profile>
+		<profile>
+			<id>subdere-int</id>
+			<properties>
+				<filter.profile>subdere-int.properties</filter.profile>
+			</properties>
+		</profile>
 	</profiles>
 </project>
