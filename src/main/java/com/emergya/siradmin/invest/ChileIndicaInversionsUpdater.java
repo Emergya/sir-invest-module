@@ -104,12 +104,12 @@ public class ChileIndicaInversionsUpdater {
 
 				restTemplate.setMessageConverters(getMessageConverters());
 				restTemplate.getInterceptors().add((new TokenInterceptor()));
-				String plainCreds = "developer:LfvKJt3NjudRVxmoNAoq";
-				byte[] plainCredsBytes = plainCreds.getBytes();
-				byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
-				String base64Creds = new String(base64CredsBytes);
+				//String plainCreds = "developer:LfvKJt3NjudRVxmoNAoq";
+				//byte[] plainCredsBytes = plainCreds.getBytes();
+				//byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
+				//String base64Creds = new String(base64CredsBytes);
 				HttpHeaders headers = new HttpHeaders();
-				headers.add("Authorization", "Basic " + base64Creds);
+				//headers.add("Authorization", "Basic " + base64Creds);
 				headers.setAccept(Arrays.asList(MediaType.TEXT_HTML));
 				HttpEntity<?> entity = new HttpEntity<Object>(headers);
 				// headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
