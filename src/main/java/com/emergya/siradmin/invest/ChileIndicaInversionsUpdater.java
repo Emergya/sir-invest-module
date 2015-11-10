@@ -12,7 +12,6 @@ import java.util.Properties;
 
 import javax.inject.Inject;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.geometry.jts.JTS;
@@ -39,8 +38,6 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.emergya.ohiggins.dto.ChileIndicaInversionsDataDto;
@@ -94,22 +91,26 @@ public class ChileIndicaInversionsUpdater {
 	private RestTemplate restTemplate;
 
 	public void getExistingKeysInChileindica() {
-		LOGGER.info("Obteniendo datos de iniciativas de inversión");
+
 		List<ChileIndicaInversionsDataDto> result = new ArrayList<ChileIndicaInversionsDataDto>();
 		// Iterate each region
 		for (WSURLRegionsCts regionName : WSURLRegionsCts.values()) {
+			LOGGER.info("Obteniendo datos de iniciativas de inversión para región: "
+					+ regionName.getValue());
+
 			List<ChileIndicaInversionsDataDto> regionProjectsInversions = new ArrayList<ChileIndicaInversionsDataDto>();
 			// Iterate each inversionType
 			for (InversionType inversionType : InversionType.values()) {
 
 				restTemplate.setMessageConverters(getMessageConverters());
 				restTemplate.getInterceptors().add((new TokenInterceptor()));
-				//String plainCreds = "developer:LfvKJt3NjudRVxmoNAoq";
-				//byte[] plainCredsBytes = plainCreds.getBytes();
-				//byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
-				//String base64Creds = new String(base64CredsBytes);
+				// String plainCreds = "developer:LfvKJt3NjudRVxmoNAoq";
+				// byte[] plainCredsBytes = plainCreds.getBytes();
+				// byte[] base64CredsBytes =
+				// Base64.encodeBase64(plainCredsBytes);
+				// String base64Creds = new String(base64CredsBytes);
 				HttpHeaders headers = new HttpHeaders();
-				//headers.add("Authorization", "Basic " + base64Creds);
+				// headers.add("Authorization", "Basic " + base64Creds);
 				headers.setAccept(Arrays.asList(MediaType.TEXT_HTML));
 				HttpEntity<?> entity = new HttpEntity<Object>(headers);
 				// headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -137,10 +138,11 @@ public class ChileIndicaInversionsUpdater {
 						// to receive a WSCallException
 						if (e instanceof WSCallException) {
 							WSCallException exception = (WSCallException) e;
-							LOGGER.info("An error occurred while calling inversions service endpoint: "
+							LOGGER.error("An error occurred while calling inversions service endpoint: "
 									+ exception.getMessage());
 						} else {
-							LOGGER.info("An error occurred while trying to parse ChileIndicaInversions Response JSON object. Cause: " + e.getMessage());
+							LOGGER.error("An error occurred while trying to parse ChileIndicaInversions Response JSON object. Cause: "
+									+ e.getMessage());
 						}
 					}
 					if (responseEntity != null
@@ -256,8 +258,8 @@ public class ChileIndicaInversionsUpdater {
 			Long dbId = iterator.next();
 			ChileIndicaInversionsDataDto dto = (ChileIndicaInversionsDataDto) service
 					.getById(dbId);
-			if (LOGGER.isInfoEnabled()) {
-				LOGGER.info("Tratando proyecto existente BBDD "
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Tratando proyecto existente BBDD "
 						+ dto.getIdIniciativaInversion());
 			}
 			// Buscamos si el proyecto existe entre las claves actuales
@@ -267,32 +269,35 @@ public class ChileIndicaInversionsUpdater {
 						.get(foundKeyIndex);
 				iterator.remove();
 				wsProjectList.remove(foundKeyIndex);
-				if (LOGGER.isInfoEnabled()) {
-					LOGGER.info("El proyecto sigue existiendo en el servicio web de consulta de iniciativas de inversión");
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("El proyecto sigue existiendo en el servicio web de consulta de iniciativas de inversión");
 				}
 				// Si el proyecto ha sido actualizado en Chileindica recuperamos
 				// los detalles del servicio web, borramos el proyecto original
 				// de la base de datos y creamos una entrada nueva en BD
 				boolean updatable = service.checkIfProjectMustBeUpdated(
 						foundKey.getIdIniciativaInversion(),
+						foundKey.getCodigo(), foundKey.getTipoIniciativa(),
+						foundKey.getAno(), foundKey.getComuna(),
+						foundKey.getNombreIniciativa(),
 						foundKey.getFechaRegistro());
 				if (updatable) {
 					service.delete(dto);
 					service.create(foundKey);
-					if (LOGGER.isInfoEnabled()) {
-						LOGGER.info("Proyecto en BBDD actualizado");
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("Proyecto en BBDD actualizado");
 					}
 				} else {
-					if (LOGGER.isInfoEnabled()) {
-						LOGGER.info("El proyecto no necesita ser actualizado en BBDD");
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("El proyecto no necesita ser actualizado en BBDD");
 					}
 				}
 			} else {
 				// si el proyecto no ha sido devuleto por el WS Consulta de
 				// iniciativas, se borra de la base de datos
 				service.delete(dto);
-				if (LOGGER.isInfoEnabled()) {
-					LOGGER.info("Se elimina el proyecto por no existir en la consulta de llaves "
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("Se elimina el proyecto por no existir en la consulta de llaves "
 							+ dto);
 				}
 			}
@@ -307,8 +312,8 @@ public class ChileIndicaInversionsUpdater {
 		// devueltas por el servicio web.
 		for (ChileIndicaInversionsDataDto inversionProject : wsProjectList) {
 			service.create(inversionProject);
-			if (LOGGER.isInfoEnabled()) {
-				LOGGER.info("Creada nueva entrada en BBDD");
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Creada nueva entrada en BBDD");
 			}
 		}
 	}
@@ -371,10 +376,10 @@ public class ChileIndicaInversionsUpdater {
 			// inversionProject.setRegion(Long.valueOf(14));
 			regionDBContext.setMultiSirRegionBeanDatabase(Long.valueOf(14));
 			break;
-		// case ARICA:
-		// inversionProject.setRegion(Long.valueOf(15));
-		// regionDBContext.setMultiSirRegionBeanDatabase(Long.valueOf(15));
-		// break;
+		case ARICA:
+			// inversionProject.setRegion(Long.valueOf(15));
+			regionDBContext.setMultiSirRegionBeanDatabase(Long.valueOf(15));
+			break;
 		default:
 			// inversionProject.setRegion(Long.valueOf(15));
 			regionDBContext.setMultiSirRegionBeanDatabase(Long.valueOf(15));
